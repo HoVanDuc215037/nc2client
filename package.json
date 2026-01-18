@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node app.js",
-    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "start": "serve -s dist -l $PORT",
+    "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
