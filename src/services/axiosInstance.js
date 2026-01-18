@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 
 // Tạo instance của axios với base URL và Bearer Token
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",  // Thay đổi baseURL nếu cần
+  baseURL: "https://nc2server.onrender.com/api",  // Thay đổi baseURL nếu cần
   headers: {
     // Nếu token tồn tại trong cookie thì thêm vào header Authorization
     Authorization: `Bearer ${Cookies.get("auth_token") || ""}`,

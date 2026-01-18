@@ -1,0 +1,185 @@
+.toolbar-buttons,
+.add-menu-btn {
+    margin-right: 10px;
+    padding: 8px 12px;
+}
+
+.toolbar,
+.tab-header {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: row;
+    border: dashed 2px gray;
+    border-radius: 5px;
+    justify-content: center;
+    padding: 10px;
+    width: max-content;
+    gap: 10px;
+}
+
+.add-menu {
+    position: absolute;
+    left: 40px;
+    top: 9px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-10px);
+    transition: 0.6s ease;
+}
+
+.add-wrapper:hover .add-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.floor-menu {
+    background: #ddd;
+    padding: 8px;
+    border-radius: 12px;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.floor-wrapper:hover .floor-menu {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.floor-list {
+    display: flex;
+    flex-direction: column;
+    height: 50vh;
+    overflow-x: scroll;
+}
+
+.floor-list button.active {
+    background: #333;
+    color: white;
+}
+
+.map-canvas {
+    width: 900px;
+    height: 500px;
+    border: 2px dashed #aaa;
+    position: relative;
+    background: #fafafa;
+    border-radius: 5px;
+}
+
+.map-item {
+    position: absolute;
+    border: 1px solid #666;
+    border-radius: 10px;
+    background: rgba(200, 200, 200, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+}
+
+.map-item.selected {
+    outline: 2px solid #2196f3;
+    outline-offset: 2px;
+    border-radius: 6px;
+
+}
+
+.table {
+    width: 90px;
+    height: 80px;
+}
+
+.entrance {
+    width: 55px;
+    height: 80px;
+}
+
+.kitchen {
+    width: 120px;
+    height: 80px;
+}
+
+.resize {
+    width: 10px;
+    height: 10px;
+    background: red;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    cursor: se-resize;
+}
+
+.save {
+    background: #4caf50;
+    color: white;
+}
+
+.form-wrap {
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    max-width: 720px
+}
+
+.form-row,
+.form-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px
+}
+
+.form-row label {
+    width: 100px
+}
+
+.form-row input[type="text"] {
+    flex: 1;
+    padding: 6px
+}
+
+.form-group label {
+    width: 100px
+}
+
+.form-group input[type="text"] {
+    flex: 1;
+    padding: 6px
+}
+
+.preview img {
+    width: 120px;
+    height: 80px;
+    display: block;
+    margin-top: 8px
+}
+
+.toolbar-buttons,
+.tab-header button,
+.qr-btn,
+#add-picture,
+.add-menu-btn,
+.main-btn,
+#save {
+    background-color: #ff6b00;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.restaurant-form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: white;
+    width: max-content;
+    border-radius: 5px;
+}
