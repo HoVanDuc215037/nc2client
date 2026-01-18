@@ -43,7 +43,7 @@ const routes = [
     ]
   },
   {
-    path: '/login-success',
+    path: '/login-success/:?',
     name: 'LoginSuccessPage',
     component: () => import('../components/Login/LoginSuccess.vue'),
   }
