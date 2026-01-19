@@ -47,19 +47,18 @@
         >
           <button class="menu-main">🏪 Quản lý cửa hàng</button>
 
-          <div
-            class="menu-dropdown"
-            v-if="openMenu === 'store' && role === 'owner'"
-          >
+          <div class="menu-dropdown" v-if="openMenu === 'store'">
             <button @click="go('orders', $event)">📦 Quản lý đơn hàng</button>
-            <button @click="go('map', $event)">🏠 Thông tin cửa hàng</button>
-            <button @click="go('production', $event)">
+            <button v-if="role === 'owner'" @click="go('map', $event)">
+              🏠 Thông tin cửa hàng
+            </button>
+            <button v-if="role === 'owner'" @click="go('production', $event)">
               🍽 Quản lý sản phẩm
             </button>
-            <button @click="go('staff', $event)">
+            <button v-if="role === 'owner'" @click="go('staff', $event)">
               👥 Quản lý tài khoản nhân viên
             </button>
-            <button @click="go('statistic', $event)">
+            <button v-if="role === 'owner'" @click="go('statistic', $event)">
               📊 Thống kê bán hàng
             </button>
           </div>

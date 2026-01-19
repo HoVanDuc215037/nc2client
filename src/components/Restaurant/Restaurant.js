@@ -14,8 +14,7 @@ export default {
             customerPhone: "",
             searchQuery: "", //lưu chuỗi tìm kiếm
             ownerId: "",
-            BACK_END_URL: "https://nc2server.onrender.com",
-            FRONT_END_URL: "http://localhost:8080",
+            BACK_END_URL: "http://localhost:3000",
             popupStep: null,
             order_user_token: {
                 name: '',
@@ -85,7 +84,7 @@ export default {
                 })
             );
             const orderData = {
-                _id: Date.now(),
+                //_id: Date.now(),
                 ownerEmail: this.$route.query.e,
                 table: Number(this.$route.query.t),
                 customer_name: this.customerName,
@@ -121,7 +120,7 @@ export default {
                 _id: product._id,
                 name: product.name,
                 price: product.price,
-                //image: product.image,
+                image: product.image,
                 quantity: 1,
             });
         },

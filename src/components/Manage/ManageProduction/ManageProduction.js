@@ -4,7 +4,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             email: '',
             products: [],
             tags: [],

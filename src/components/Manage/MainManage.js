@@ -6,6 +6,7 @@ import ManageMapPage from './ManageMap/ManageMap.vue';
 import ProfilePage from './Profile/Profile.vue';
 import ManageStaffPage from './ManageStaff/ManageStaff.vue';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
     name: 'ManagePage',
@@ -26,7 +27,7 @@ export default {
             name: '',
             avatar: null,
             user: {},
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             defaultAvatar: require('@/assets/user.png'),
             openMenu: null
         };
@@ -36,12 +37,11 @@ export default {
     async created() {
         this.token = Cookies.get('auth_token');
         if (!this.token) { this.$router.push('/login'); return; }
-        const payload = JSON.parse(atob(this.token.split('.')[1]));
-        //console.log(payload.user);
-        const haveMap = payload.user.haveMap;
-        if (haveMap == false) this.activeTab = 'map';
+        const payload = jwtDecode(this.token);
+        console.log(payload.user);
         this.email = payload.user.email;
         this.role = payload.user.role;
+        if (payload.user.haveMap == false && this.role === 'owner') this.activeTab = 'map';
         this.name = payload.user.name;
         const requestEmail = this.email.split('@gmail.com')[0];
         try {

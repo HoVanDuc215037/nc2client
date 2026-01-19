@@ -1,14 +1,18 @@
 import axios from "axios";
 import { io } from "socket.io-client";
 import Cookies from "js-cookie";
+import { jwtDecode } from 'jwt-decode';
 
 export default {
     name: "ManageOrder",
 
     data() {
         return {
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             ownerEmail: "",
+            email: "",
+            role: "",
+            createdBy: "",
             mapData: null,
             tempOrders: [],
             socket: null,
@@ -35,8 +39,12 @@ export default {
     },
     async created() {
         this.token = Cookies.get('auth_token');
-        const payload = JSON.parse(atob(this.token.split('.')[1]));
-        this.ownerEmail = payload.user.email;
+        const payload = jwtDecode(this.token);
+        console.log(payload.user);
+        this.email = payload.user.email;
+        this.role = payload.user.role;
+        if (this.role === 'owner') this.ownerEmail = this.email;
+        else this.ownerEmail = payload.user.createdBy;
         //await this.loadRestaurant();
         const response = await axios.get(`${this.BACK_END_URL}/owner/restaurant`, {
             params: { email: this.ownerEmail },
@@ -52,9 +60,7 @@ export default {
         initSocket() {
             //console.log(this.ownerEmail);
             const room = this.ownerEmail.split('@gmail.com');
-            this.socket = io(this.BACK_END_URL, {
-
-            });
+            this.socket = io(this.BACK_END_URL, {});
             this.socket.on("connect", () => {
                 this.socket.emit("join_owner", room);
             });
@@ -72,25 +78,26 @@ export default {
                     table.meta.orderStatus = "pending";
                 }
             });
+            this.socket.on("order_status_updated", (order) => {
+                const table = this.mapData.items.find(
+                    i => i.type === "table" && i.meta.table === order.table
+                );
+
+                if (table) {
+                    table.meta.currentOrder = order;
+                    table.meta.orderStatus = order.status;
+                }
+            });
         },
         markOrderDone() {
             if (!this.selectedOrder) return;
 
-            const table = this.mapData.items.find(
-                i =>
-                    i.type === "table" &&
-                    i.meta.table === this.selectedOrder.table
-            );
-            console.log('done: ', table);
-            if (table) {
-                table.meta.currentOrder = null;
-                table.meta.orderStatus = null;
-            }
-
-            // (tuỳ chọn) báo về BE
-            // this.socket.emit("owner:order-done", {
-            //     orderId: this.selectedOrder._id,
-            // });
+            this.socket.emit("update_order_status", {
+                room: this.ownerEmail,
+                orderId: this.selectedOrder._id,
+                status: "done",
+                order: this.selectedOrder,
+            });
 
             this.closePopup();
         },

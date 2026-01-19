@@ -1,0 +1,125 @@
+.staff-page {
+    padding: 20px;
+    background: #fff;
+}
+
+.staff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ff5c5c;
+    color: #fff;
+    font-size: 22px;
+    border: none;
+    cursor: pointer;
+}
+
+.staff-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.staff-card {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    flex-wrap: wrap;
+    width: max-content;
+}
+
+.staff-avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.info h4 {
+    margin: 0;
+}
+
+.info p {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.status {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.status.active {
+    background: #e7f9ef;
+    color: #22a06b;
+}
+
+.status.inactive {
+    background: #eee;
+    color: #777;
+}
+
+.delete-btn {
+    background: #f11818;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    color: white;
+}
+
+/* POPUP */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup {
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    width: 300px;
+}
+
+.popup input {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 8px;
+}
+
+.popup-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup-actions .create {
+    background: #22a06b;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+}
+
+.popup-actions .cancel {
+    background: #ddd;
+    border: none;
+    padding: 8px 16px;
+}

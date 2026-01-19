@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
     data() {
@@ -39,7 +40,7 @@ export default {
                 map: {},
             },
             token: {},
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             email: '',
         }
     },
@@ -50,13 +51,20 @@ export default {
         }
     },
 
-    async mounted() {
+    mounted() {
         window.addEventListener('mousemove', this.onMove)
         window.addEventListener('mouseup', this.stopDrag)
         window.addEventListener('keydown', this.handleKeydown)
+    },
 
+    beforeUnmount() {
+        window.removeEventListener('mousemove', this.onMove)
+        window.removeEventListener('mouseup', this.stopDrag)
+        window.removeEventListener('keydown', this.handleKeydown)
+    },
+    async created() {
         this.token = Cookies.get('auth_token');
-        const payload = JSON.parse(atob(this.token.split('.')[1]));
+        const payload = jwtDecode(this.token);
         this.restaurant.haveRestaurant = payload.user.haveRestaurant;
         if (!this.restaurant.haveRestaurant) this.activeTab = 'info'
         else this.activeTab = 'map';
@@ -66,13 +74,6 @@ export default {
 
         await this.loadRestaurant()
     },
-
-    beforeUnmount() {
-        window.removeEventListener('mousemove', this.onMove)
-        window.removeEventListener('mouseup', this.stopDrag)
-        window.removeEventListener('keydown', this.handleKeydown)
-    },
-
     methods: {
         async loadRestaurant() {
             try {

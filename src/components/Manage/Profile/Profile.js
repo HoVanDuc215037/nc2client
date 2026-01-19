@@ -1,10 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { jwtDecode } from 'jwt-decode';
 
 export default {
     data() {
         return {
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
 
             role: '',
             isEdit: false,
@@ -38,7 +39,7 @@ export default {
         const token = Cookies.get("auth_token");
         if (!token) return this.$router.push("/login");
 
-        const payload = JSON.parse(atob(token.split(".")[1]));
+        const payload = jwtDecode(this.token);
         this.role = payload.user.role;
         this.account.email = payload.user.email;
         this.accountEmail = payload.user.email;

@@ -71,10 +71,17 @@
     background: #2ecc71;
     color: #fff;
     padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .popup .close {
     margin-left: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .map-area {
