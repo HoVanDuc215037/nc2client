@@ -14,7 +14,7 @@ export default {
             customerPhone: "",
             searchQuery: "", //lưu chuỗi tìm kiếm
             ownerId: "",
-            BACK_END_URL: "http://localhost:3000",
+            BACK_END_URL: "https://nc2server.onrender.com",
             popupStep: null,
             order_user_token: {
                 name: '',

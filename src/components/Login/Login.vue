@@ -47,7 +47,7 @@
     <div class="divider">HOẶC</div>
 
     <!-- Google -->
-    <a href="http://localhost:3000/auth/google">
+    <a href="https://nc2server.onrender.com/auth/google">
       <button class="google-btn">
         {{ isRegister ? "Đăng ký bằng Google" : "Đăng nhập bằng Google" }}
       </button>

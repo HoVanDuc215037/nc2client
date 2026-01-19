@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 export default {
     data() {
         return {
-            BACK_END_URL: "http://localhost:3000",
+            BACK_END_URL: "https://nc2server.onrender.com",
 
             role: '',
             isEdit: false,

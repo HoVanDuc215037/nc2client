@@ -27,7 +27,7 @@ export default {
             name: '',
             avatar: null,
             user: {},
-            BACK_END_URL: "http://localhost:3000",
+            BACK_END_URL: "https://nc2server.onrender.com",
             defaultAvatar: require('@/assets/user.png'),
             openMenu: null
         };
