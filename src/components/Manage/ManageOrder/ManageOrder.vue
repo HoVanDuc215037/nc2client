@@ -1,7 +1,6 @@
 <template>
   <div class="manage-order">
     <div id="section-header">Quản lý đơn hàng</div>
-    <!-- MAP -->
     <div class="map-area" v-if="mapData">
       <div
         v-for="item in mapData.items"
@@ -14,33 +13,30 @@
         <img :src="icons[item.type].icon" style="width: 60px" />
         <div
           v-if="item.type === 'table'"
-          :class="{ pending: hasPendingOrder(item.meta.table) }"
+          :class="{ pending: hasOrder(item.meta.table) }"
         >
           <div
             class="table-label"
-            :class="{ active: hasPendingOrder(item.meta.table) }"
+            :class="{ active: hasOrder(item.meta.table) }"
           >
             Bàn {{ item.meta.table }}
           </div>
-          <span
-            v-if="hasPendingOrder(item.meta.table)"
-            class="order-dot"
-          ></span>
+          <span v-if="hasOrder(item.meta.table)" class="order-dot"></span>
         </div>
       </div>
     </div>
-    <!-- POPUP -->
     <div v-if="showPopup" class="popup-overlay">
       <div class="popup">
         <h3>Bàn {{ selectedOrder.table }}</h3>
-        <p>Khách hàng: {{ selectedOrder.customer_name }}</p>
+        <p>Khách hàng: {{ selectedOrder.customer_infor.split("_")[0] }}</p>
+        <p>Số điện thoại: {{ selectedOrder.customer_infor.split("_")[1] }}</p>
         <ul>
           <li
-            v-for="(p, i) in selectedOrder.products"
+            v-for="(p, i) in selectedOrder.productions"
             :key="i"
             class="order-item"
           >
-            <img :src="p.image" />
+            <img :src="getProductImage(p)" />
             <div>
               <p>{{ p.name }}</p>
               <small>x {{ p.quantity }}</small>
@@ -52,9 +48,11 @@
         </ul>
         <p class="total">
           Tổng tiền:
-          {{ calculateTotal(selectedOrder.products).toLocaleString() }} VNĐ
+          {{ calculateTotal(selectedOrder.productions).toLocaleString() }} VNĐ
         </p>
-        <button class="done" @click="markOrderDone">Hoàn thành</button>
+        <button class="done" @click="markOrderDone(selectedOrder.table)">
+          Hoàn thành
+        </button>
         <button class="close" @click="closePopup">Đóng</button>
       </div>
     </div>

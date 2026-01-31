@@ -19,7 +19,7 @@
 
 .add-menu {
     position: absolute;
-    left: 40px;
+    left: 30px;
     top: 9px;
     z-index: 1;
     display: flex;
@@ -175,6 +175,10 @@
     cursor: pointer;
 }
 
+.tab-header-btn.active {
+    background: #24c424;
+}
+
 .restaurant-form {
     display: flex;
     flex-direction: column;
@@ -182,4 +186,22 @@
     background: white;
     width: max-content;
     border-radius: 5px;
+}
+
+.map-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.map-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 300px;
 }

@@ -16,8 +16,6 @@
           required
         />
       </div>
-
-      <!-- Chỉ hiện khi đăng ký -->
       <div v-if="isRegister">
         <label>Nhập lại mật khẩu:</label>
         <input
@@ -45,15 +43,11 @@
     </form>
 
     <div class="divider">HOẶC</div>
-
-    <!-- Google -->
-    <a href="https://nc2server.onrender.com/auth/google">
+    <a href="http://localhost:3000/auth/google">
       <button class="google-btn">
         {{ isRegister ? "Đăng ký bằng Google" : "Đăng nhập bằng Google" }}
       </button>
     </a>
-
-    <!-- Chuyển chế độ -->
     <p class="switch-mode">
       <span v-if="!isRegister">
         Chưa có tài khoản?

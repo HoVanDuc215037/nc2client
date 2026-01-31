@@ -24,7 +24,9 @@ h1 {
 .search-bar {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-bottom: 20px;
+    gap: 10px;
 }
 
 .search-bar input {
@@ -236,4 +238,36 @@ h1 {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
+}
+
+button.header-button {
+    width: auto;
+    height: max-content;
+    border-radius: 5px;
+    padding: 5px 15px;
+    border: none;
+    background: #ff6b00;
+    color: white;
+    cursor: pointer;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.tag-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #ff6b00;
+    background: white;
+    cursor: pointer;
+    color: #ff6b00;
+}
+
+.tag-btn.active {
+    background: #ff6b00;
+    color: white;
 }

@@ -27,7 +27,7 @@ export default {
             name: '',
             avatar: null,
             user: {},
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             defaultAvatar: require('@/assets/user.png'),
             openMenu: null
         };
@@ -38,7 +38,6 @@ export default {
         this.token = Cookies.get('auth_token');
         if (!this.token) { this.$router.push('/login'); return; }
         const payload = jwtDecode(this.token);
-        console.log(payload.user);
         this.email = payload.user.email;
         this.role = payload.user.role;
         if (payload.user.haveMap == false && this.role === 'owner') this.activeTab = 'map';

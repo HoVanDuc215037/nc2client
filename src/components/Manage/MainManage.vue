@@ -1,6 +1,5 @@
 <template>
   <div class="manage-root">
-    <!-- Header Section -->
     <div class="dashboard">
       <div
         class="user-info"
@@ -11,63 +10,33 @@
           {{ name }}
         </p>
       </div>
-      <!-- <div class="dashboard-actions">
-        <div style="display: flex; flex-direction: column">
-          <button class="dashboard-btn" @click="go('orders', $event)">
-            Xem Đơn Hàng
-          </button>
-          <div v-if="role === 'owner'">
-            <button class="dashboard-btn" @click="go('production', $event)">
-              Quản Lý Món Ăn
-            </button>
-            <button class="dashboard-btn" @click="go('map', $event)">
-              Quản Lý Cửa Hàng
-            </button>
-            <button class="dashboard-btn" @click="go('statistic', $event)">
-              Quản Lý Doanh Thu
-            </button>
-            <button class="dashboard-btn" @click="go('staff', $event)">
-              Quản lý tài khoản nhân viên
-            </button>
-          </div>
-          <button class="dashboard-btn" @click="go('profile', $event)">
-            Hồ sơ
-          </button>
-        </div>
-        <button class="dashboard-btn" @click="logout" style="margin-top: 20vh">
-          Đăng Xuất
-        </button>
-      </div> -->
       <div class="dashboard-menu">
-        <!-- QUẢN LÝ CỬA HÀNG -->
         <div
           class="menu-group"
           @mouseenter="openMenu = 'store'"
           @mouseleave="openMenu = null"
         >
-          <button class="menu-main">🏪 Quản lý cửa hàng</button>
+          <button class="menu-main">Quản lý cửa hàng</button>
 
           <div class="menu-dropdown" v-if="openMenu === 'store'">
-            <button @click="go('orders', $event)">📦 Quản lý đơn hàng</button>
+            <button @click="go('orders', $event)">Quản lý đơn hàng</button>
             <button v-if="role === 'owner'" @click="go('map', $event)">
-              🏠 Thông tin cửa hàng
+              Thông tin cửa hàng
             </button>
             <button v-if="role === 'owner'" @click="go('production', $event)">
-              🍽 Quản lý sản phẩm
+              Quản lý sản phẩm
             </button>
             <button v-if="role === 'owner'" @click="go('staff', $event)">
-              👥 Quản lý tài khoản nhân viên
+              Quản lý tài khoản nhân viên
             </button>
             <button v-if="role === 'owner'" @click="go('statistic', $event)">
-              📊 Thống kê bán hàng
+              Thống kê bán hàng
             </button>
           </div>
         </div>
-
-        <!-- HỒ SƠ -->
         <div class="menu-group">
           <button class="menu-main" @click="go('profile', $event)">
-            👤 Hồ sơ
+            Hồ sơ
           </button>
         </div>
       </div>

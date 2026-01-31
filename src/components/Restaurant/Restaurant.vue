@@ -11,6 +11,7 @@
         v-model="searchQuery"
         placeholder="Tìm kiếm món ăn..."
       />
+      <button class="header-button" @click="openFilterPopup">Lọc</button>
     </div>
 
     <div class="menu">
@@ -29,10 +30,13 @@
             alt="product"
             class="product-image"
             style="border: 2px dashed gray"
+            @click="openDetail(product)"
           />
 
-          <h3>{{ product.name }}</h3>
-          <p class="price">{{ product.price.toLocaleString() }} VNĐ</p>
+          <h3 @click="openDetail(product)">{{ product.name }}</h3>
+          <p class="price" @click="openDetail(product)">
+            {{ product.price.toLocaleString() }} VNĐ
+          </p>
 
           <button v-if="!isInCart(product._id)" @click="addToCart(product)">
             Thêm vào giỏ
@@ -42,13 +46,9 @@
         </div>
       </div>
     </div>
-
-    <!-- Popup để nhập tên và số điện thoại, và hiển thị giỏ hàng -->
     <div v-if="isPopupVisible" class="popup-overlay">
       <div class="popup">
         <h2>Xác nhận đơn hàng</h2>
-
-        <!-- Hiển thị thông tin giỏ hàng -->
         <h3>Giỏ hàng của bạn</h3>
         <ul>
           <li v-for="(item, index) in cart" :key="index">
@@ -57,8 +57,6 @@
           </li>
         </ul>
         <p><strong>Tổng cộng:</strong> {{ calculateTotal(cart) }} VNĐ</p>
-
-        <!-- Nhập thông tin khách hàng -->
         <label for="name">Tên:</label>
         <input type="text" v-model="customerName" placeholder="Nhập tên" />
         <label for="phone">Số điện thoại:</label>
@@ -67,17 +65,13 @@
           v-model="customerPhone"
           placeholder="Nhập số điện thoại"
         />
-
         <button @click="submitRequest">Xác nhận</button>
         <button @click="hidePopup">Hủy</button>
       </div>
     </div>
-
     <button v-if="cart.length" @click="openCartPopup" class="open-cart">
       Xem giỏ hàng ({{ cart.length }})
     </button>
-
-    <!-- POPUP GIỎ HÀNG -->
     <div
       v-if="popupStep === 'cart'"
       class="popup-overlay"
@@ -85,7 +79,6 @@
     >
       <div class="popup cart-popup">
         <h2>Giỏ hàng</h2>
-
         <div v-for="(item, index) in cart" :key="index" class="cart-item">
           <div style="display: flex; gap: 15px">
             <img
@@ -93,15 +86,12 @@
               class="cart-image"
               style="border: 1px dashed gray"
             />
-
             <div class="cart-info">
               <h4>{{ item.name }}</h4>
               <p>Số lượng: {{ item.quantity }}</p>
               <p class="price">{{ item.price.toLocaleString() }} VNĐ</p>
             </div>
           </div>
-
-          <!-- NÚT XOÁ -->
           <button
             class="remove-btn"
             @click="removeFromCart(index)"
@@ -111,24 +101,19 @@
             Xóa
           </button>
         </div>
-
         <div class="cart-total">
           <strong>Tổng:</strong>
           {{ calculateTotal(cart).toLocaleString() }} VNĐ
         </div>
-
         <div class="popup-actions">
           <button @click="goToConfirm">Đặt hàng</button>
           <button @click="closeAllPopup">Đóng</button>
         </div>
       </div>
     </div>
-
     <div v-if="requestStatus" class="request-status">
       <p>Yêu cầu của bạn đã được gửi thành công!</p>
     </div>
-
-    <!-- POPUP XÁC NHẬN -->
     <div
       v-if="popupStep === 'confirm'"
       class="popup-overlay"
@@ -161,7 +146,6 @@
               <p class="price">{{ item.price.toLocaleString() }} VNĐ</p>
             </div>
           </div>
-          <!-- NÚT XOÁ -->
           <button
             class="remove-btn"
             @click="removeFromCart(index)"
@@ -183,6 +167,60 @@
           <button @click="submitRequest">Gửi yêu cầu</button>
           <button @click="closeAllPopup">Đóng</button>
         </div>
+      </div>
+    </div>
+    <div
+      v-if="isFilterPopup"
+      class="popup-overlay"
+      @click.self="closeFilterPopup"
+    >
+      <div class="popup">
+        <h3>Lọc theo tag</h3>
+
+        <div class="tag-list">
+          <button
+            v-for="tag in allTags"
+            :key="tag"
+            @click="toggleTag(tag)"
+            :class="{ active: selectedTags.includes(tag) }"
+            class="tag-btn"
+          >
+            {{ tag }}
+          </button>
+        </div>
+
+        <div class="popup-actions">
+          <button @click="closeFilterPopup">Áp dụng</button>
+          <button @click="resetFilter">Hủy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-if="showDetailPopup" class="popup-overlay" @click.self="closeDetail">
+    <div class="popup">
+      <h3>Chi tiết sản phẩm</h3>
+
+      <img
+        :src="selectedProduct.image"
+        style="width: 100%; border-radius: 6px; margin-bottom: 10px"
+      />
+
+      <p><b>Tên:</b> {{ selectedProduct.name }}</p>
+      <p><b>Mô tả:</b> {{ selectedProduct.description || "Không có" }}</p>
+      <p><b>Giá:</b> {{ selectedProduct.price.toLocaleString() }} VNĐ</p>
+
+      <p>
+        <b>Tags:</b>
+        {{ (selectedProduct.tags || []).join(", ") || "Không có" }}
+      </p>
+
+      <p>
+        <b>Ngày tạo:</b>
+        {{ new Date(selectedProduct.createdAt).toLocaleString() }}
+      </p>
+
+      <div class="popup-actions">
+        <button class="btn" @click="closeDetail">Đóng</button>
       </div>
     </div>
   </div>

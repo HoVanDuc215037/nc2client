@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <router-view></router-view> <!-- Đây là nơi các trang sẽ được hiển thị -->
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: "App",
 };
 </script>

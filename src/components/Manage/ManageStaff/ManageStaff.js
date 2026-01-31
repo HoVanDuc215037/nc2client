@@ -6,7 +6,7 @@ export default {
 
     data() {
         return {
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             defaultAvatar: require('@/assets/user.png'),
             email: '',
             staffs: [],
@@ -34,18 +34,16 @@ export default {
 
     methods: {
         async loadStaffs() {
-            // 🔌 GẮN API SAU
             const res = await axios.get(`${this.BACK_END_URL}/owner/accounts`, {
                 params: {
                     ownerEmail: this.email.split('@gmail.com')[0],
                 }
             });
-            console.log(res.data);
             this.staffs = res.data;
         },
 
         async createStaff() {
-            if (!this.newStaff.name || !this.newStaff.email) {
+            if (!this.newStaff.name || !this.newStaff.email.split) {
                 alert("Vui lòng nhập đầy đủ thông tin");
                 return;
             }
@@ -53,26 +51,21 @@ export default {
             this.newStaff.username = this.newStaff.email.split('@')[0];
             this.newStaff.avatar = this.defaultAvatar;
             this.newStaff.role = 'staff';
-            this.newStaff.password = '123';
-            // 🔌 GẮN API SAU
+            this.newStaff.password = '';
+            this.newStaff.email = this.newStaff.email.split('@')[0];
             const response = await axios.post(`${this.BACK_END_URL}/owner/account`, {
                 account: this.newStaff,
             });
-            console.log(response.data);
-            this.staffs.push({
-                ...this.newStaff,
-            });
+            if (response.data.result) this.staffs.push({ ...this.newStaff, });
 
             this.closePopup();
         },
 
         async deleteStaff(id) {
             if (!confirm("Xóa nhân viên này?")) return;
-            console.log(id);
-            const response = await axios.delete(`${this.BACK_END_URL}/owner/account`, {
+            await axios.delete(`${this.BACK_END_URL}/owner/account`, {
                 data: { _id: id },
             });
-            console.log(response);
             this.staffs = this.staffs.filter(s => s._id !== id);
         },
 

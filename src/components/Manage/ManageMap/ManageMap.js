@@ -1,10 +1,12 @@
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import QRCode from 'qrcode';
 
 export default {
     data() {
         return {
+            FRONT_END_URL: "http://localhost:8080",
             items: [],
             floors: [1],
             currentFloor: 1,
@@ -40,8 +42,11 @@ export default {
                 map: {},
             },
             token: {},
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             email: '',
+            showQRPopup: false,
+            selectedTable: null,
+            qrImage: null,
         }
     },
 
@@ -118,19 +123,23 @@ export default {
             )
             this.tableCounter = max + 1
         },
+        switchTab(e, tab) {
+            this.activeTab = tab;
+            document.querySelectorAll('.tab-header-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+        },
         onFileChange(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = () => {
-                this.restaurant.image = reader.result; // base64
+                this.restaurant.image = reader.result;
             };
             reader.readAsDataURL(file);
         },
         selectImage() {
             this.$refs.fileInput.click();
         },
-
         async saveRestaurant() {
             if (!this.haveRestaurant) {
                 await axios.post(`${this.BACK_END_URL}/owner/restaurant`, {
@@ -167,8 +176,25 @@ export default {
 
             return item
         },
-        selectItem(item) {
-            this.selectedItemId = item.id
+        async selectItem(item) {
+            if (this.editMode) this.selectedItemId = item.id;
+            else {
+                if (this.editMode) return;
+                if (item.type !== "table") return;
+                const emailWithoutAt = this.email.split("@")[0];
+                const tableNumber = item.meta.table;
+
+                const qrContent =
+                    `${this.FRONT_END_URL}/restaurant/?e=${emailWithoutAt}&t=${tableNumber}`;
+
+                this.qrImage = await QRCode.toDataURL(qrContent, {
+                    width: 300,
+                    margin: 2,
+                });
+
+                this.selectedTable = tableNumber;
+                this.showQRPopup = true;
+            }
         },
         clearSelection() {
             this.selectedItemId = null
@@ -274,8 +300,52 @@ export default {
             this.haveMap = true
             this.editMode = false
         },
-        createTableQR() {
-            console.log('Create QR for tables')
-        }
+        async createTableQR() {
+            const tables = this.items.filter(i => i.type === "table");
+            if (!tables.length) {
+                alert("Chưa tạo bàn nào!");
+                return;
+            }
+            const emailWithoutAt = this.email.split("@")[0];
+            for (const table of tables) {
+                const tableNumber = table.meta.table;
+
+                const qrContent =
+                    `${this.FRONT_END_URL}/restaurant/?e=${emailWithoutAt}&t=${tableNumber}`;
+                const dataUrl = await QRCode.toDataURL(qrContent, {
+                    width: 300,
+                    margin: 2,
+                });
+                const a = document.createElement("a");
+                a.href = dataUrl;
+                a.download = `QR_BAN_${tableNumber}.png`;
+                a.click();
+            }
+        },
+        async handleTableClick(item) {
+            if (this.editMode) return;
+            if (item.type !== "table") return;
+            const emailWithoutAt = this.email.split("@")[0];
+            const tableNumber = item.meta.table;
+
+            const qrContent =
+                `${this.FRONT_END_URL}/restaurant/?e=${emailWithoutAt}&t=${tableNumber}`;
+
+            this.qrImage = await QRCode.toDataURL(qrContent, {
+                width: 300,
+                margin: 2,
+            });
+
+            this.selectedTable = tableNumber;
+            this.showQRPopup = true;
+        },
+        downloadSingleQR() {
+            if (!this.qrImage || !this.selectedTable) return;
+
+            const a = document.createElement("a");
+            a.href = this.qrImage;
+            a.download = `QR_BAN_${this.selectedTable}.png`;
+            a.click();
+        },
     }
 }

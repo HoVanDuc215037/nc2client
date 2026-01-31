@@ -9,12 +9,18 @@ import ManageMapPage from '../components/Manage/ManageMap/ManageMap.vue'
 import ProfilePage from '../components/Manage/Profile/Profile.vue'
 import ManageStaffPage from '../components/Manage/ManageStaff/ManageStaff.vue'
 import MainManagePage from '../components/Manage/MainManage.vue'
+import AdminPage from '../components/Admin/Admin.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/admin',
+    name: 'AdminPage',
+    component: AdminPage,
   },
   {
     path: '/restaurant/:?/:?',
@@ -28,7 +34,7 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/login'  // Đưa người dùng về trang order mặc định
+    redirect: '/login'
   },
   {
     path: '/manage',

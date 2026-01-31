@@ -5,6 +5,7 @@ export default {
     name: "RestaurantPage",
     data() {
         return {
+            BACK_END_URL: "http://localhost:3000",
             products: [],
             cart: [],
             requestStatus: false,
@@ -12,20 +13,22 @@ export default {
             tableNumber: null,
             customerName: "",
             customerPhone: "",
-            searchQuery: "", //lưu chuỗi tìm kiếm
+            searchQuery: "",
             ownerId: "",
-            BACK_END_URL: "https://nc2server.onrender.com",
             popupStep: null,
             order_user_token: {
                 name: '',
                 phone: ''
             },
             ownerEmail: '',
+            isFilterPopup: false,
+            selectedTags: [],
+            selectedProduct: null,
+            showDetailPopup: false,
         };
     },
     async created() {
         this.ownerEmail = this.$route.query.ownerEmail;
-        //console.log(this.$route.query);
         const encodedTable =
             this.$route.query
                 .d4fc4a78d3706edccafb665a8b2fdd9309e82c78625bb0f2b8e7bb9e1c4d21c;
@@ -37,18 +40,31 @@ export default {
     },
     computed: {
         filteredProducts() {
-            if (!this.searchQuery) {
-                return this.products;
-            }
-            return this.products.filter((product) => {
-                const searchQueryLower = this.searchQuery.toLowerCase();
-                return (
-                    product.name.toLowerCase().includes(searchQueryLower) ||
-                    product.description.toLowerCase().includes(searchQueryLower) ||
-                    product.price.toString().includes(searchQueryLower)
+            let result = this.products;
+            if (this.searchQuery) {
+                const q = this.searchQuery.toLowerCase();
+                result = result.filter(p =>
+                    p.name.toLowerCase().includes(q) ||
+                    p.description?.toLowerCase().includes(q) ||
+                    p.price.toString().includes(q)
                 );
-            });
+            }
+            if (this.selectedTags.length > 0) {
+                result = result.filter(product =>
+                    this.selectedTags.every(tag =>
+                        product.tags?.includes(tag)
+                    )
+                );
+            }
+            return result;
         },
+        allTags() {
+            const tags = new Set();
+            this.products.forEach(p => {
+                p.tags?.forEach(t => tags.add(t));
+            });
+            return Array.from(tags);
+        }
     },
     methods: {
         initSocket() {
@@ -61,17 +77,16 @@ export default {
                 const email = this.$route.query.e;
                 const response = await axios.get(`${this.BACK_END_URL}/production/email`, {
                     params: {
-                        email: email,
-                        page: 1,
-                        pageSize: 5
+                        email: email
                     }
                 });
+                console.log(response.data);
                 this.products = await response.data;
             } catch (err) {
                 console.error("Không tải được sản phẩm", err);
             }
         },
-        submitRequest() {
+        async submitRequest() {
             if (!this.customerName || !this.customerPhone) {
                 alert("Vui lòng nhập tên và số điện thoại");
                 return;
@@ -84,18 +99,16 @@ export default {
                 })
             );
             const orderData = {
-                //_id: Date.now(),
-                ownerEmail: this.$route.query.e,
+                owner_email: this.$route.query.e,
                 table: Number(this.$route.query.t),
-                customer_name: this.customerName,
-                customer_phone: this.customerPhone,
-                products: this.cart,
+                customer_infor: this.customerName + "_" + this.customerPhone,
+                productions: this.cart,
                 total: this.calculateTotal(this.cart),
                 status: "pending",
                 createdAt: new Date(),
             };
             this.socket.emit("customer_order", orderData);
-            console.log("ORDER SENT:", orderData);
+            await axios.post(`${this.BACK_END_URL}/order/`, orderData);
             this.cart = [];
             this.closeAllPopup();
             alert('Tạo đơn hàng thành công');
@@ -120,7 +133,6 @@ export default {
                 _id: product._id,
                 name: product.name,
                 price: product.price,
-                image: product.image,
                 quantity: 1,
             });
         },
@@ -170,6 +182,32 @@ export default {
         getProductImage(productId) {
             const product = this.products.find(p => p._id === productId);
             return product ? product.image : '';
+        },
+        openFilterPopup() {
+            this.isFilterPopup = true;
+        },
+        closeFilterPopup() {
+            this.isFilterPopup = false;
+        },
+        toggleTag(tag) {
+            if (this.selectedTags.includes(tag)) {
+                this.selectedTags = this.selectedTags.filter(t => t !== tag);
+            } else {
+                this.selectedTags.push(tag);
+            }
+        },
+        resetFilter() {
+            this.selectedTags = [];
+            this.isFilterPopup = false;
+        },
+        openDetail(product) {
+            this.selectedProduct = product;
+            this.showDetailPopup = true;
+        },
+
+        closeDetail() {
+            this.selectedProduct = null;
+            this.showDetailPopup = false;
         },
     },
 };

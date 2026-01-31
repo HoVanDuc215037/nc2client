@@ -1,0 +1,62 @@
+.statistic-page {
+    padding: 16px;
+    background: #f5f6fa;
+    min-height: 100vh;
+}
+
+.header {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.filter button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    background: #eaeaea;
+    cursor: pointer;
+}
+
+.filter button.active {
+    background: #4f7cff;
+    color: #fff;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.revenue .value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.label {
+    color: #888;
+    font-size: 13px;
+}
+
+.value {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 6px;
+}

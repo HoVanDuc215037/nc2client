@@ -207,3 +207,13 @@
     padding: 20px;
     color: #999;
 }
+
+.delete-btn {
+    background: #d32f2f;
+    color: white;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background: #b71c1c;
+}

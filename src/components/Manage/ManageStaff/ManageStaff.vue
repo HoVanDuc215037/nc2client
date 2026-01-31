@@ -1,12 +1,9 @@
 <template>
   <div class="staff-page">
-    <!-- HEADER -->
     <div class="staff-header">
       <h2>Nhân viên</h2>
       <button class="add-btn" @click="showPopup = true">+</button>
     </div>
-
-    <!-- STAFF LIST -->
     <div class="staff-list">
       <div v-if="staffs.length === 0">Không tồn tại nhân viên, hãy tạo mới</div>
       <div v-else>
@@ -24,8 +21,6 @@
         </div>
       </div>
     </div>
-
-    <!-- ADD STAFF POPUP -->
     <div v-if="showPopup" class="popup-overlay">
       <div class="popup">
         <h3>Thêm nhân viên</h3>

@@ -3,16 +3,25 @@
     <div id="section-header">Thông tin cá nhân</div>
 
     <div class="profile-card">
-      <!-- LEFT -->
       <div class="profile-component profile-left">
-        <img :src="previewAvatar || accountAvatar" class="profile-avatar" />
-
-        <input
-          v-if="isEdit"
-          type="file"
-          accept="image/*"
-          @change="onAvatarChange"
-        />
+        <h4>Thông tin tài khoản</h4>
+        <div class="avatar-wrapper">
+          <img :src="previewAvatar || accountAvatar" class="profile-avatar" />
+          <button
+            v-if="isEdit"
+            class="avatar-edit-btn"
+            @click="triggerAvatarInput"
+          >
+            Thay ảnh
+          </button>
+          <input
+            ref="avatarInput"
+            type="file"
+            accept="image/*"
+            style="display: none"
+            @change="onAvatarChange"
+          />
+        </div>
 
         <div class="info">
           <input v-if="isEdit" v-model="accountName" class="profile-input" />
@@ -20,18 +29,18 @@
 
           <p><b>Email:&nbsp;</b>{{ accountEmail }}</p>
         </div>
-
-        <button @click="toggleEdit" class="profile-btn">
-          {{ isEdit ? "Lưu" : "Sửa thông tin" }}
+        <button v-if="!isEdit" @click="toggleEdit" class="profile-btn">
+          Sửa thông tin
+        </button>
+        <button v-if="isEdit" @click="saveProfile()" class="profile-btn">
+          Lưu
         </button>
         <button v-if="isEdit" @click="closeEdit" class="profile-btn">
           Hủy
         </button>
       </div>
-
-      <!-- RIGHT -->
       <div class="profile-component profile-right">
-        <!-- OWNER -->
+        <h4>Thông tin cửa hàng</h4>
         <div v-if="role === 'owner'">
           <img
             :src="previewRestaurant || restaurantImage"
@@ -40,8 +49,6 @@
           <h3><b>Thuộc nhà hàng:&nbsp;</b>{{ restaurantName }}</h3>
           <p><b>Địa chỉ:&nbsp;</b>{{ restaurantLocation }}</p>
         </div>
-
-        <!-- STAFF -->
         <div v-else>
           <div class="staff-info">
             <b>Thuộc nhà hàng:&nbsp;</b>{{ restaurantName }}

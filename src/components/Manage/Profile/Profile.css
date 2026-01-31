@@ -65,3 +65,23 @@
     padding: 12px;
     border-radius: 8px;
 }
+
+.avatar-wrapper {
+    position: relative;
+    width: 150px;
+    margin: auto;
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}

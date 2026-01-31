@@ -8,7 +8,9 @@ export default {
 
     data() {
         return {
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
+            room: "",
+            restaurant_products: [],
             ownerEmail: "",
             email: "",
             role: "",
@@ -40,65 +42,67 @@ export default {
     async created() {
         this.token = Cookies.get('auth_token');
         const payload = jwtDecode(this.token);
-        console.log(payload.user);
         this.email = payload.user.email;
         this.role = payload.user.role;
         if (this.role === 'owner') this.ownerEmail = this.email;
         else this.ownerEmail = payload.user.createdBy;
-        //await this.loadRestaurant();
         const response = await axios.get(`${this.BACK_END_URL}/owner/restaurant`, {
             params: { email: this.ownerEmail },
         });
         if (response.data?.map) {
             this.mapData = response.data.map;
-            console.log('map data', this.mapData);
         }
-        this.initSocket();
-    },
 
+        const response_product = await axios.get(`${this.BACK_END_URL}/production/email`, {
+            params: {
+                email: this.ownerEmail.split('@')[0],
+            }
+        });
+        this.restaurant_products = response_product.data;
+        this.initSocket();
+        await this.loadPendingOrder();
+    },
     methods: {
         initSocket() {
-            //console.log(this.ownerEmail);
-            const room = this.ownerEmail.split('@gmail.com');
+            this.room = this.ownerEmail.split('@gmail.com');
             this.socket = io(this.BACK_END_URL, {});
             this.socket.on("connect", () => {
-                this.socket.emit("join_owner", room);
+                this.socket.emit("join_owner", this.room);
             });
-            this.socket.on("restaurant_order", (orders) => {
-                console.log("Orders updated:", orders);
-                // 🔎 tìm đúng bàn trên map
-                const table = this.mapData.items.find(
-                    item =>
-                        item.type === "table" &&
-                        item.meta.table === orders.table
-                );
-                console.log('found', table);
-                if (table) {
-                    table.meta.currentOrder = orders;
-                    table.meta.orderStatus = "pending";
-                }
-            });
-            this.socket.on("order_status_updated", (order) => {
+            this.socket.on("restaurant_order", (order) => {
                 const table = this.mapData.items.find(
                     i => i.type === "table" && i.meta.table === order.table
                 );
-
                 if (table) {
                     table.meta.currentOrder = order;
-                    table.meta.orderStatus = order.status;
+                }
+            });
+            this.socket.on("order_done", (tableID) => {
+                console.log(this.mapData.items);
+                const table = this.mapData.items.find(
+                    i => i.type === 'table' && i.meta.table == tableID
+                );
+
+                if (table) {
+                    table.meta.currentOrder = null;
                 }
             });
         },
-        markOrderDone() {
+        async markOrderDone(tableNumber) {
             if (!this.selectedOrder) return;
-
+            const table = this.mapData.items.find(
+                i => i.type === "table" && i.meta.table === tableNumber
+            );
+            if (table) {
+                table.meta.currentOrder = null;
+            }
+            await axios.post(`${this.BACK_END_URL}/order/update`, {
+                orderId: this.selectedOrder._id
+            });
             this.socket.emit("update_order_status", {
-                room: this.ownerEmail,
-                orderId: this.selectedOrder._id,
-                status: "done",
+                room: this.room,
                 order: this.selectedOrder,
             });
-
             this.closePopup();
         },
         async loadRestaurant() {
@@ -107,18 +111,17 @@ export default {
             });
             if (response.data?.map) {
                 this.mapData = response.data.map;
-                //console.log(this.mapData);
             }
         },
-
-        hasPendingOrder(tableNumber) {
+        hasOrder(tableNumber) {
             const table = this.mapData.items.find(
-                i =>
-                    i.type === "table" &&
-                    i.meta.table === tableNumber
+                i => i.type === "table" && i.meta.table === tableNumber
             );
-
-            return table?.meta.orderStatus === "pending";
+            return !!table?.meta.currentOrder;
+        },
+        getProductImage(product) {
+            const target_product = this.restaurant_products.find(p => p._id === product._id);
+            return target_product.image;
         },
         tableStyle(item) {
             let width = '';
@@ -134,7 +137,7 @@ export default {
             };
         },
         openTable(item) {
-            if (item.type === 'table' && item.meta.orderStatus === "pending") {
+            if (item.type === "table" && item.meta.currentOrder) {
                 this.selectedOrder = item.meta.currentOrder;
                 this.showPopup = true;
             }
@@ -143,11 +146,32 @@ export default {
             this.showPopup = false;
             this.selectedOrder = null;
         },
-        calculateTotal(products) {
-            return products.reduce(
+        calculateTotal(productions) {
+            return productions.reduce(
                 (sum, p) => sum + p.price * p.quantity,
                 0
             );
         },
+        async loadPendingOrder() {
+            const response = await axios.get(`${this.BACK_END_URL}/order/pending`, {
+                params: {
+                    ownerEmail: this.ownerEmail.split('@')[0],
+                }
+            });
+            const orders = response.data;
+            this.mapData.items.forEach(item => {
+                if (item.type === "table") {
+                    item.meta.order = [];
+                }
+            });
+            orders.forEach(order => {
+                const table = this.mapData.items.find(
+                    i => i.type === "table" && i.meta.table === order.table
+                );
+                if (table) {
+                    table.meta.currentOrder = order;
+                }
+            });
+        }
     },
 };

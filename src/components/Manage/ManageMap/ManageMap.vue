@@ -5,30 +5,29 @@
     </div>
     <div class="tab-header">
       <button
-        :class="{ active: activeTab === 'info' }"
-        @click="activeTab = 'info'"
-        style="width: max-content"
-      >
-        🏪 Thông tin cửa hàng
-      </button>
-
-      <button
         :disabled="!haveRestaurant"
         :class="{ active: activeTab === 'map' }"
-        @click="activeTab = 'map'"
+        @click="switchTab($event, 'map')"
         style="width: max-content"
+        class="tab-header-btn map-btn"
       >
-        🗺️ Bản đồ
+        Bản đồ cửa hàng
+      </button>
+      <button
+        :class="{ active: activeTab === 'info' }"
+        @click="switchTab($event, 'info')"
+        style="width: max-content"
+        class="tab-header-btn infor-btn"
+      >
+        Thông tin cửa hàng
       </button>
     </div>
     <div v-if="activeTab === 'info'" class="restaurant-form">
       <h3>Thông tin cửa hàng</h3>
-
       <div class="form-group">
         <label>Tên cửa hàng</label>
         <input v-model="restaurant.name" type="text" />
       </div>
-
       <div class="form-group">
         <label>Vị trí</label>
         <input v-model="restaurant.textLocation" type="text" />
@@ -62,24 +61,24 @@
         </div>
       </div>
 
-      <button @click="saveRestaurant" id="save">💾 Lưu</button>
+      <button @click="saveRestaurant" id="save">Lưu</button>
     </div>
     <div v-if="activeTab === 'map'">
       <div style="width: 90%; flex: 1">
         <div class="toolbar">
           <div class="list-buttons" style="display: flex">
             <div v-if="editMode" style="display: flex">
-              <button class="toolbar-buttons" @click="undo">↶ Undo</button>
-              <button class="toolbar-buttons" @click="redo">↷ Redo</button>
+              <button class="toolbar-buttons" @click="undo">Undo</button>
+              <button class="toolbar-buttons" @click="redo">Redo</button>
               <button
                 class="toolbar-buttons"
                 @click="deleteSelected"
                 :disabled="!selectedItemId"
               >
-                ❌ Xóa
+                Xóa
               </button>
               <button class="save" @click="saveMap" style="width: max-content">
-                💾 Lưu
+                Lưu
               </button>
             </div>
           </div>
@@ -91,12 +90,12 @@
             Sửa
           </button>
           <button v-if="!editMode" class="qr-btn" @click="createTableQR">
-            Tạo QR bàn
+            Tải QR các bàn
           </button>
         </div>
         <div style="display: flex; position: relative">
           <div v-if="editMode" class="add-wrapper">
-            <button class="main-btn">➕</button>
+            <button class="main-btn">+</button>
             <div class="add-menu">
               <button class="add-menu-btn" @click="addItem('table')">
                 Bàn
@@ -133,6 +132,23 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div v-if="showQRPopup" class="map-popup-overlay">
+        <div class="map-popup">
+          <h3>QR Bàn {{ selectedTable }}</h3>
+
+          <img :src="qrImage" style="width: 250px" />
+
+          <p style="font-size: 12px; word-break: break-all">
+            {{ FRONT_END_URL }}/restaurant/?e={{ email.split("@")[0] }}&t={{
+              selectedTable
+            }}
+          </p>
+
+          <button class="save" @click="downloadSingleQR">Tải QR</button>
+
+          <button class="close" @click="showQRPopup = false">Đóng</button>
         </div>
       </div>
     </div>

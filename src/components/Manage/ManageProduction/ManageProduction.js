@@ -4,7 +4,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            BACK_END_URL: "https://nc2server.onrender.com",
+            BACK_END_URL: "http://localhost:3000",
             email: '',
             products: [],
             tags: [],
@@ -14,7 +14,7 @@ export default {
                 description: '',
                 price: null,
                 sale: 1,
-                image: null, // base64 string
+                image: null,
                 tags: []
             },
             productionTags: [
@@ -33,25 +33,30 @@ export default {
                 "Có cồn",
                 "Chay"
             ],
+
+            selectedProduct: null,
+            showDetailPopup: false,
         };
     },
     async created() {
         const token = Cookies.get('auth_token');
         const payload = JSON.parse(atob(token.split('.')[1]));
         this.email = payload.user.email;
-        const emailPseudo = this.email.split('@gmail.com')[0];
-        const response = await axios.get(`${this.BACK_END_URL}/production/email`, {
-            params: {
-                email: emailPseudo,
-                page: 1,
-                pageSize: 5
-            }
-        });
-        if (response.data) {
-            this.products = this.reverseArrayData(response.data);
-        }
+        this.loadProductions();
     },
     methods: {
+        async loadProductions() {
+            const emailPseudo = this.email.split('@gmail.com')[0];
+            const response = await axios.get(`${this.BACK_END_URL}/production/email`, {
+                params: {
+                    email: emailPseudo,
+                    page: 1,
+                    pageSize: 5
+                }
+            });
+            console.log(response.data);
+            this.products = this.reverseArrayData(response.data);
+        },
         toggleForm() {
             this.showForm = !this.showForm;
         },
@@ -63,8 +68,6 @@ export default {
             const response = await axios.get(`${this.BACK_END_URL}/production/email`, {
                 params: {
                     email: emailPseudo,
-                    page: 1,
-                    pageSize: 5
                 }
             });
             return response.data;
@@ -89,14 +92,14 @@ export default {
 
             const reader = new FileReader();
             reader.onload = () => {
-                this.form.image = reader.result; // base64
+                this.form.image = reader.result;
             };
             reader.readAsDataURL(file);
         },
         async submitProduct() {
             const payload = {
                 ...this.form,
-                tags: this.form.tags, // mảng string
+                tags: this.form.tags,
                 createdBy: this.email
             };
             const response = await axios.post(
@@ -105,9 +108,32 @@ export default {
             );
             if (response.status == 200) {
                 alert("Tạo sản phẩm thành công");
-                this.clearInputData();
             } else { alert("Lỗi tạo sản phẩm") }
+            this.showForm = !this.showForm;
+            this.loadProductions();
         },
-        clearInputData() { }
+        openDetail(product) {
+            this.selectedProduct = product;
+            this.showDetailPopup = true;
+        },
+
+        closeDetail() {
+            this.selectedProduct = null;
+            this.showDetailPopup = false;
+        },
+
+        async deleteProduct(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+            try {
+                await axios.post(`${this.BACK_END_URL}/production/delete`, {
+                    _id: id
+                });
+                alert("Xóa sản phẩm thành công");
+                this.products = this.products.filter(p => p._id !== id);
+            } catch (err) {
+                console.error(err);
+                alert("Xóa sản phẩm thất bại");
+            }
+        },
     }
 };

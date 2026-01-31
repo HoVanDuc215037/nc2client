@@ -5,7 +5,6 @@
       <button class="btn" @click="toggleForm">
         {{ showForm ? "Hủy" : "Thêm" }}
       </button>
-      <button class="btn" @click="fetchProducts">Tải lại</button>
     </div>
 
     <div id="production-infor-form" v-if="showForm" class="form-wrap">
@@ -43,8 +42,6 @@
 
       <div class="form-row" style="margin-top: 50px">
         <label>Image</label>
-
-        <!-- input file ẩn -->
         <input
           ref="fileInput"
           type="file"
@@ -52,13 +49,9 @@
           style="display: none"
           @change="onFileChange"
         />
-
-        <!-- nút bấm -->
         <button class="btn" id="add-picture" @click="selectImage">
           Chọn ảnh
         </button>
-
-        <!-- preview -->
         <div
           v-if="form.image"
           class="preview"
@@ -73,7 +66,12 @@
       </div>
     </div>
     <div class="list-item">
-      <div v-for="product in products" :key="product._id" class="product-item">
+      <div
+        v-for="product in products"
+        :key="product._id"
+        class="product-item"
+        @click="openDetail(product)"
+      >
         <img
           :src="product.image"
           alt="product"
@@ -88,6 +86,37 @@
             {{ (product.tags || []).join("; ") }}
           </div>
         </div>
+        <button class="btn delete-btn" @click.stop="deleteProduct(product._id)">
+          Xóa
+        </button>
+      </div>
+    </div>
+  </div>
+  <div v-if="showDetailPopup" class="popup-overlay" @click.self="closeDetail">
+    <div class="popup">
+      <h3>Chi tiết sản phẩm</h3>
+
+      <img
+        :src="selectedProduct.image"
+        style="width: 100%; border-radius: 6px; margin-bottom: 10px"
+      />
+
+      <p><b>Tên:</b> {{ selectedProduct.name }}</p>
+      <p><b>Mô tả:</b> {{ selectedProduct.description || "Không có" }}</p>
+      <p><b>Giá:</b> {{ selectedProduct.price.toLocaleString() }} VNĐ</p>
+
+      <p>
+        <b>Tags:</b>
+        {{ (selectedProduct.tags || []).join(", ") || "Không có" }}
+      </p>
+
+      <p>
+        <b>Ngày tạo:</b>
+        {{ new Date(selectedProduct.createdAt).toLocaleString() }}
+      </p>
+
+      <div class="popup-actions">
+        <button class="btn" @click="closeDetail">Đóng</button>
       </div>
     </div>
   </div>

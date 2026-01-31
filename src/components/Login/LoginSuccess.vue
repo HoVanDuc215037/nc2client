@@ -6,26 +6,30 @@
 
 <script>
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export default {
   name: "LoginSuccessPage",
   data() {
     return {
       encodedToken: "",
+      token: "",
     };
   },
-  beforeCreate() {
-    const token =
-      this.$route.query
-        .e078cb80a315c1545d5396567810bf94dc360f30bfdaae14ca6aad6cf9fe768d;
-    if (!token) {
+  beforeCreate() {},
+  created() {
+    this.token =
+      this.$route.query.e078cb80a315c1545d5396567810bf94dc360f30bfdaae14ca6aad6cf9fe768d;
+    if (this.token === "") {
       this.$router.push("/login");
       return;
     }
-    Cookies.set("auth_token", token, { expires: 7 });
-    this.$router.push("/manage");
+    Cookies.set("auth_token", this.token, { expires: 7 });
+    const payload = jwtDecode(this.token);
+    if (payload.user.role === "owner" || payload.user.role === "staff")
+      this.$router.push("/manage");
+    if (payload.user.role === "admin") this.$router.push("/admin");
   },
-  created() {},
   methods: {},
 };
 </script>

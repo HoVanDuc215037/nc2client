@@ -68,17 +68,12 @@
     position: relative;
 }
 
-/* dropdown */
 .menu-dropdown {
-    /* position: absolute;
-    left: 0;
-    top: 100%; */
     width: 100%;
     background: white;
     border-radius: 10px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
     padding: 8px 0;
-    /* z-index: 10; */
 }
 
 /* item */
