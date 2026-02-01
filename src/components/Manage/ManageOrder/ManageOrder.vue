@@ -30,7 +30,17 @@
         <h3>Bàn {{ selectedOrder.table }}</h3>
         <p>Khách hàng: {{ selectedOrder.customer_infor.split("_")[0] }}</p>
         <p>Số điện thoại: {{ selectedOrder.customer_infor.split("_")[1] }}</p>
-        <ul>
+        <ul
+          style="
+            list-style: none;
+            padding: 0;
+            max-height: 30vh;
+            overflow: scroll;
+            border: 2px dashed gray;
+            padding: 5px;
+            border-radius: 5px;
+          "
+        >
           <li
             v-for="(p, i) in selectedOrder.productions"
             :key="i"
