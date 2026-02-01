@@ -4,7 +4,7 @@ export default {
     name: "LoginPage",
     data() {
         return {
-            BACK_END_URL: "http://localhost:3000",
+            BACK_END_URL: "https://nc2server.onrender.com",
             username: "",
             password: "",
             isRegister: false,
